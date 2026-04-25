@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARS - نظام طلبات الشراء</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --mars-primary: #2596be;
+            --mars-secondary: #b5bbbe;
+            --mars-tertiary: #c7b078;
+            --mars-accent: #c7b078;
+            --mars-star: #c7b078;
+            --mars-dark: #323846;
+            --mars-space: #0d0d1a;
+            --success: #2E8B57;
+            --danger: #DC143C;
+            --warning: #FF8C00;
+            --info: #2596be;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--mars-space) 0%, #0d0d1a 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--mars-primary) 0%, var(--mars-dark) 100%);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            border-radius: 15px 15px 0 0;
+            margin-bottom: 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '★';
+            position: absolute;
+            bottom: -20px; right: -20px;
+            font-size: 80px; opacity: 0.1; color: var(--mars-star);
+        }
+
+        .header::after {
+            content: '●';
+            position: absolute;
+            top: -30px; left: -30px;
+            font-size: 120px; opacity: 0.08; color: var(--mars-tertiary);
+        }
+
+        .logo {
+            background: white;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .logo i {
+            color: var(--mars-primary);
+            font-size: 48px;
+        }
+
+        .logo .mars-star {
+            position: absolute;
+            top: -5px; right: -5px;
+            color: var(--mars-star);
+            font-size: 22px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 span {
+            color: var(--mars-star);
+            text-shadow: 0 0 5px rgba(199,176,120,0.5);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Security Section */
+        .security-section {
+            background: linear-gradient(135deg, var(--mars-primary) 0%, var(--mars-dark) 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .security-section::after {
+            content: '★';
+            position: absolute;
+            bottom: 5px;
+            left: 10px;
+            font-size: 40px;
+            opacity: 0.1;
+            color: var(--mars-star);
+        }
+
+        .security-input-group {
+            display: flex;
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .security-input-group input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        .security-btn {
+            background: var(--mars-star);
+            color: var(--mars-dark);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .security-btn:hover {
+            background: #FFC107;
+            transform: scale(1.02);
+        }
+
+        /* Welcome Card */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--mars-tertiary) 0%, var(--mars-primary) 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .welcome-info h3 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .welcome-info p {
+            opacity: 0.9;
+        }
+
+        .mars-badge {
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Breadcrumb navigation */
+        .breadcrumb {
+            background: rgba(50, 56, 70, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            color: white;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .breadcrumb span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breadcrumb .separator {
+            opacity: 0.7;
+            margin: 0 5px;
+        }
+
+        /* Form card */
+        .card {
+            background: rgba(255,255,255,0.96);
+            border-radius: 0 0 15px 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-top: 5px solid var(--mars-secondary);
+        }
+
+        .form-title {
+            color: var(--mars-dark);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--mars-primary);
+            border-radius: 2px;
+        }
+
+        .form-title i {
+            color: var(--mars-primary);
+            margin-left: 10px;
+        }
+
+        /* Form sections */
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-right: 4px solid var(--mars-primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .form-section h3 {
+            color: var(--mars-dark);
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section h3 i {
+            color: var(--mars-primary);
+        }
+
+        /* Form groups */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--mars-dark);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: var(--mars-primary);
+            width: 20px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--mars-primary);
+            box-shadow: 0 0 0 4px rgba(37, 150, 190, 0.1);
+        }
+
+        .form-group input[readonly] {
+            background-color: #f0f0f0;
+            border-color: #ddd;
+            color: #666;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        /* Required fields */
+        .required-field::after {
+            content: " *";
+            color: var(--danger);
+            font-weight: bold;
+        }
+
+        /* Items container */
+        .items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .item-container {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .item-container:hover {
+            box-shadow: 0 4px 15px rgba(37, 150, 190, 0.1);
+            border-color: var(--mars-primary);
+        }
+
+        .item-header {
+            background: var(--mars-primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-header i {
+            color: var(--mars-star);
+        }
+
+        /* Grid layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Submit button */
+        .submit-btn {
+            background: linear-gradient(135deg, var(--mars-primary) 0%, var(--mars-dark) 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 150, 190, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn i {
+            transition: transform 0.3s;
+        }
+
+        .submit-btn:hover i {
+            transform: translateX(-5px);
+        }
+
+        /* Status messages */
+        .status-message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-message.success {
+            background: #d4edda;
+            color: var(--success);
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-message.error {
+            background: #f8d7da;
+            color: var(--danger);
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-message.info {
+            background: #d1ecf1;
+            color: var(--info);
+            border: 1px solid #bee5eb;
+        }
+
+        /* Hints */
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .hint i {
+            color: var(--mars-primary);
+            font-size: 12px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 20px;
+        }
+
+        .footer a {
+            color: var(--mars-star);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        /* Item count */
+        .item-count {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .item-count label {
+            font-weight: 600;
+            color: var(--mars-dark);
+            min-width: 120px;
+        }
+
+        .item-count input {
+            width: 100px;
+            text-align: center;
+            padding: 8px;
+            border: 2px solid var(--mars-primary);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        /* Info card for employee */
+        .info-card {
+            background: #e8f4f8;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-right: 4px solid var(--mars-primary);
+        }
+
+        .info-card p {
+            margin: 5px 0;
+            color: var(--mars-dark);
+        }
+
+        .info-card i {
+            color: var(--mars-primary);
+            width: 25px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            .header h1 {
+                font-size: 26px;
+            }
+            
+            .header p {
+                font-size: 16px;
+            }
+            
+            .form-title {
+                font-size: 24px;
+            }
+            
+            .breadcrumb {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .welcome-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 0;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .logo i {
+                font-size: 36px;
+            }
+            
+            .form-section h3 {
+                font-size: 18px;
+            }
+            
+            .security-input-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-mars"></i>
+                <span class="mars-star"><i class="fas fa-star"></i></span>
+            </div>
+            <h1><span>★</span> MARS <span>★</span></h1>
+            <p>منظمة المراقبة والتحليل والاستجابة السريعة</p>
+            <p style="font-size: 12px; margin-top: 5px;">Monitoring, Analysis & Rapid Response System</p>
+        </header>
+
+        <!-- Breadcrumb navigation -->
+        <div class="breadcrumb">
+            <span><i class="fas fa-home"></i> الرئيسية</span>
+            <span class="separator">›</span>
+            <span><i class="fas fa-shopping-bag"></i> المشتريات</span>
+            <span class="separator">›</span>
+            <span style="font-weight: bold;"><i class="fas fa-file-invoice"></i> طلب شراء جديد</span>
+        </div>
+
+        <!-- Security Code Section -->
+        <div class="security-section" id="securitySection">
+            <h3><i class="fas fa-shield-alt"></i> رمز الأمان</h3>
+            <div class="security-input-group">
+                <input type="password" id="securityCode" placeholder="أدخل الرمز السري" onkeypress="handleEnterKey(event)">
+                <button class="security-btn" onclick="verifySecurityCode()"><i class="fas fa-lock-open"></i> دخول</button>
+            </div>
+            <div id="securityError" style="color: #ffaaaa; margin-top: 10px; display: none;">⚠️ رمز خاطئ! الرجاء المحاولة مرة أخرى</div>
+        </div>
+
+        <!-- Main Form (يظهر بعد تسجيل الدخول) -->
+        <div id="mainForm" style="display: none;">
+            <!-- Welcome Card -->
+            <div class="welcome-card">
+                <div class="welcome-info">
+                    <h3><span id="empNameDisplay"></span></h3>
+                    <p><span id="empDeptDisplay"></span> | <span id="empEmailDisplay"></span></p>
+                </div>
+                <div class="mars-badge">
+                    <i class="fas fa-mars"></i>
+                    <span>MARS نظام طلبات الشراء</span>
+                </div>
+            </div>
+
+            <!-- Form card -->
+            <div class="card">
+                <h2 class="form-title">
+                    <i class="fas fa-file-invoice"></i>
+                    نموذج طلب شراء
+                </h2>
+
+                <form id="purchaseForm">
+                    <!-- Applicant Information Section -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-user-circle"></i> معلومات مقدم الطلب</h3>
+                        
+                        <!-- معلومات الموظف المسجل (تعبأ تلقائياً) -->
+                        <div class="info-card">
+                            <p><i class="fas fa-user"></i> <strong>الاسم:</strong> <span id="requester_name"></span></p>
+                            <p><i class="fas fa-envelope"></i> <strong>البريد الإلكتروني:</strong> <span id="requester_email"></span></p>
+                            <p><i class="fas fa-briefcase"></i> <strong>المسمى الوظيفي:</strong> <span id="requester_position"></span></p>
+                            <p><i class="fas fa-building"></i> <strong>القسم:</strong> <span id="requester_dept"></span></p>
+                            <p><i class="fas fa-user-tie"></i> <strong>المشرف المباشر:</strong> <span id="requester_supervisor"></span></p>
+                        </div>
+                        
+                        <!-- حقول مخفية لنقل البيانات -->
+                        <input type="hidden" id="employee_name" name="employee_name">
+                        <input type="hidden" id="employee_email" name="employee_email">
+                        <input type="hidden" id="employee_position" name="employee_position">
+                        <input type="hidden" id="employee_dept" name="employee_dept">
+                        <input type="hidden" id="supervisor_name" name="supervisor_name">
+                    </div>
+                    
+                    <!-- Request Information Section -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-clipboard-list"></i> معلومات الطلب</h3>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="program" class="required-field"><i class="fas fa-project-diagram"></i> البرنامج</label>
+                                <select id="program" name="program" required>
+                                    <option value="">-- اختر البرنامج --</option>
+                                    <option value="Emergency Response">الاستجابة للطوارئ</option>
+                                    <option value="Protection">الحماية</option>
+                                    <option value="Shelter & NFIs">المأوى والمواد غير الغذائية</option>
+                                    <option value="WASH">المياه والإصحاح</option>
+                                    <option value="Food Security">الأمن الغذائي</option>
+                                    <option value="Health">الصحة</option>
+                                    <option value="Education">التعليم</option>
+                                    <option value="Community Resilience">تمكين المجتمعات</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="project" class="required-field"><i class="fas fa-folder-open"></i> المشروع</label>
+                                <input type="text" id="project" name="project" required placeholder="أدخل اسم المشروع">
+                            </div>
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="donor" class="required-field"><i class="fas fa-hand-holding-usd"></i> المانح</label>
+                                <input type="text" id="donor" name="donor" required placeholder="أدخل اسم المانح">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="date" class="required-field"><i class="fas fa-calendar-alt"></i> تاريخ الطلب</label>
+                                <input type="date" id="date" name="date" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="office" class="required-field"><i class="fas fa-building"></i> المكتب</label>
+                                <select id="office" name="office" required>
+                                    <option value="">-- اختر المكتب --</option>
+                                    <option value="حلب">حلب</option>
+                                    <option value="أعزاز">أعزاز</option>
+                                    <option value="عفرين">عفرين</option>
+                                    <option value="أطمة">أطمة</option>
+                                    <option value="دمشق">دمشق</option>
+                                    <option value="غازي عينتاب">غازي عينتاب</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="budget_line"><i class="fas fa-chart-line"></i> رقم الميزانية</label>
+                                <input type="text" id="budget_line" name="budget_line" placeholder="اختياري - رقم بند الميزانية">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Items/Services Details Section -->
+                    <div class="form-section">
+                        <h3><i class="fas fa-boxes"></i> تفاصيل الأصناف / الخدمات المطلوبة</h3>
+                        
+                        <div class="item-count">
+                            <label for="item_count"><i class="fas fa-calculator"></i> عدد الأصناف:</label>
+                            <input type="number" id="item_count" name="item_count" min="1" max="20" value="1" required onchange="generateItemFields()">
+                        </div>
+                        
+                        <div id="items_container" class="items-container">
+                            <!-- Fields will be generated dynamically -->
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        إرسال طلب الشراء
+                    </button>
+                    
+                    <div id="statusMessage" class="status-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div>
+                <i class="fas fa-copyright"></i> 2026 MARS - منظمة المراقبة والتحليل والاستجابة السريعة
+            </div>
+            <div style="margin-top: 10px;">
+                <a href="#"><i class="fas fa-question-circle"></i> مساعدة</a>
+                <span style="margin: 0 10px;">|</span>
+                <a href="#"><i class="fas fa-lock"></i> سياسة الخصوصية</a>
+                <span style="margin: 0 10px;">|</span>
+                <a href="#"><i class="fas fa-phone-alt"></i> اتصل بنا</a>
+            </div>
+            <div style="margin-top: 15px; font-size: 12px; opacity: 0.7;">
+                Purchase Request System v2.0 | Developed by MEAL Department
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ============= بيانات الموظفين (نفس البيانات الموجودة في الملف) =============
+        const employeesData = {
+            // الإدارة التنفيذية
+            "أسامة شربجي": { email: "acorbaci@mars-ngo.org", dept: "الإدارة التنفيذية", code: "CEO_001", position: "المدير التنفيذي", supervisor: "" },
+            
+            // المراقبة والتقييم
+            "مهيدي الخالدي": { email: "malkhalidi@mars-ngo.org", dept: "المراقبة والتقييم", code: "ME_101", position: "مسؤول MEAL", supervisor: "أسامة شربجي" },
+            "كريم المصري": { email: "kelmasri@mars-ngo.org", dept: "المراقبة والتقييم", code: "ME_102", position: "أخصائي تقييم", supervisor: "مهيدي الخالدي" },
+            "نور الهدى": { email: "nourhoda@mars-ngo.org", dept: "المراقبة والتقييم", code: "ME_103", position: "أخصائية بيانات", supervisor: "مهيدي الخالدي" },
+            
+            // البرامج
+            "رامي شديد": { email: "rshadid@mars-ngo.org", dept: "البرامج", code: "Pro_201", position: "مدير برامج", supervisor: "أسامة شربجي" },
+            "سلمى عزام": { email: "sazam@mars-ngo.org", dept: "البرامج", code: "Pro_202", position: "منسقة برامج", supervisor: "رامي شديد" },
+            "طارق زيدان": { email: "tzidan@mars-ngo.org", dept: "البرامج", code: "Pro_203", position: "منسق برامج", supervisor: "رامي شديد" },
+            "غادة عون": { email: "gaoun@mars-ngo.org", dept: "البرامج", code: "Pro_204", position: "أخصائية برامج", supervisor: "رامي شديد" },
+            "فهد الدوسري": { email: "fdossary@mars-ngo.org", dept: "البرامج", code: "Pro_205", position: "منسق ميداني", supervisor: "رامي شديد" },
+            "منى صبري": { email: "msabri@mars-ngo.org", dept: "البرامج", code: "Pro_206", position: "أخصائية مشاريع", supervisor: "رامي شديد" },
+            "يوسف كرم": { email: "ykaram@mars-ngo.org", dept: "البرامج", code: "Pro_207", position: "مساعد برامج", supervisor: "رامي شديد" },
+            
+            // العمليات
+            "أحمد شاهين": { email: "ashahin@mars-ngo.org", dept: "العمليات", code: "Op_301", position: "مدير العمليات", supervisor: "أسامة شربجي" },
+            "بسمة خطاب": { email: "bkhattab@mars-ngo.org", dept: "العمليات", code: "Op_302", position: "مسؤولة عمليات", supervisor: "أحمد شاهين" },
+            "جمال سليمان": { email: "jsulaiman@mars-ngo.org", dept: "العمليات", code: "Op_303", position: "منسق لوجستي", supervisor: "أحمد شاهين" },
+            "ديانا مراد": { email: "dmurad@mars-ngo.org", dept: "العمليات", code: "Op_304", position: "مسؤولة مشتريات", supervisor: "أحمد شاهين" },
+            "حسناء شرف": { email: "hsharaf@mars-ngo.org", dept: "العمليات", code: "Op_305", position: "أخصائية مخازن", supervisor: "أحمد شاهين" },
+            "زهير بيطار": { email: "zbitar@mars-ngo.org", dept: "العمليات", code: "Op_306", position: "مسؤول لوجستي", supervisor: "أحمد شاهين" },
+            "سامر خليل": { email: "skhalil@mars-ngo.org", dept: "العمليات", code: "Op_307", position: "سائق/مسؤول توصيل", supervisor: "أحمد شاهين" },
+            "شيرين رشيد": { email: "srasheed@mars-ngo.org", dept: "العمليات", code: "Op_308", position: "مسؤولة مشتريات", supervisor: "أحمد شاهين" },
+            
+            // الإعلام
+            "مازن صواف": { email: "msawaf@mars-ngo.org", dept: "الإعلام", code: "Med_401", position: "مدير الإعلام", supervisor: "أسامة شربجي" },
+            "رنا حجازي": { email: "rhijazi@mars-ngo.org", dept: "الإعلام", code: "Med_402", position: "أخصائية تواصل", supervisor: "مازن صواف" },
+            
+            // الشراكات
+            "وليد تيم": { email: "wteem@mars-ngo.org", dept: "الشراكات", code: "Part_501", position: "مدير الشراكات", supervisor: "أسامة شربجي" },
+            "نادين شرف": { email: "nsharaf@mars-ngo.org", dept: "الشراكات", code: "Part_502", position: "أخصائية شراكات", supervisor: "وليد تيم" },
+            "عمر رشيد": { email: "orashid@mars-ngo.org", dept: "الشراكات", code: "Part_503", position: "منسق شراكات", supervisor: "وليد تيم" },
+            
+            // الموارد البشرية
+            "هند سليمان": { email: "hsulaiman@mars-ngo.org", dept: "الموارد البشرية", code: "HR_601", position: "مديرة الموارد البشرية", supervisor: "أسامة شربجي" },
+            "محمد الفار": { email: "malfar@mars-ngo.org", dept: "الموارد البشرية", code: "HR_602", position: "أخصائي موارد بشرية", supervisor: "هند سليمان" }
+        };
+
+        let currentEmployee = null;
+
+        // ============= دوال المصادقة =============
+        function verifySecurityCode() {
+            const code = document.getElementById('securityCode').value.trim();
+            const errorDiv = document.getElementById('securityError');
+            
+            let found = null;
+            for (const [name, data] of Object.entries(employeesData)) {
+                if (data.code === code) {
+                    found = { name, ...data };
+                    break;
+                }
+            }
+            
+            if (found) {
+                errorDiv.style.display = 'none';
+                currentEmployee = found;
+                
+                // عرض معلومات الموظف في الـ Welcome Card
+                document.getElementById('empNameDisplay').textContent = found.name;
+                document.getElementById('empDeptDisplay').textContent = found.dept;
+                document.getElementById('empEmailDisplay').textContent = found.email;
+                
+                // تعبئة معلومات مقدم الطلب في نموذج الطلب
+                document.getElementById('requester_name').textContent = found.name;
+                document.getElementById('requester_email').textContent = found.email;
+                document.getElementById('requester_position').textContent = found.position || "غير محدد";
+                document.getElementById('requester_dept').textContent = found.dept;
+                document.getElementById('requester_supervisor').textContent = found.supervisor || "لا يوجد مشرف مباشر";
+                
+                // تعبئة الحقول المخفية للإرسال
+                document.getElementById('employee_name').value = found.name;
+                document.getElementById('employee_email').value = found.email;
+                document.getElementById('employee_position').value = found.position || "غير محدد";
+                document.getElementById('employee_dept').value = found.dept;
+                document.getElementById('supervisor_name').value = found.supervisor || "لا يوجد مشرف مباشر";
+                
+                // إخفاء قسم الأمان وإظهار النموذج
+                document.getElementById('securitySection').style.display = 'none';
+                document.getElementById('mainForm').style.display = 'block';
+                document.getElementById('securityCode').value = '';
+                
+                alert(`✅ مرحباً ${found.name}\nتم تسجيل الدخول بنجاح إلى نظام طلبات الشراء`);
+            } else {
+                errorDiv.style.display = 'block';
+                document.getElementById('securityCode').value = '';
+            }
+        }
+
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') verifySecurityCode();
+        }
+
+        // ============= دوال الأصناف =============
+        function generateItemFields() {
+            const itemCount = parseInt(document.getElementById("item_count").value) || 1;
+            const container = document.getElementById("items_container");
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= itemCount; i++) {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'item-container';
+                itemDiv.innerHTML = `
+                    <div class="item-header">
+                        <i class="fas fa-box"></i>
+                        الصنف ${i}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="item_${i}" class="required-field"><i class="fas fa-tag"></i> اسم الصنف / الخدمة</label>
+                        <input type="text" id="item_${i}" name="item[]" required placeholder="أدخل اسم الصنف أو الخدمة">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description_${i}" class="required-field"><i class="fas fa-align-left"></i> وصف تفصيلي</label>
+                        <textarea id="description_${i}" name="description[]" rows="3" required placeholder="قدم وصفاً تفصيلياً للصنف أو الخدمة"></textarea>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="quantity_${i}" class="required-field"><i class="fas fa-hashtag"></i> الكمية</label>
+                            <input type="number" id="quantity_${i}" name="quantity[]" min="1" required oninput="calculateTotal(${i})">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="unit_${i}" class="required-field"><i class="fas fa-ruler"></i> وحدة القياس</label>
+                            <select id="unit_${i}" name="unit[]" required>
+                                <option value="">-- اختر الوحدة --</option>
+                                <option value="قطعة">قطعة</option>
+                                <option value="كيلوغرام">كيلوغرام</option>
+                                <option value="لتر">لتر</option>
+                                <option value="متر">متر</option>
+                                <option value="متر مربع">متر مربع</option>
+                                <option value="طقم">طقم</option>
+                                <option value="عبوة">عبوة</option>
+                                <option value="ساعة">ساعة</option>
+                                <option value="يوم">يوم</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="unit_price_${i}" class="required-field"><i class="fas fa-dollar-sign"></i> السعر للوحدة ($)</label>
+                            <input type="number" id="unit_price_${i}" name="unit_price[]" step="0.01" min="0" required oninput="calculateTotal(${i})" placeholder="0.00">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="total_price_${i}"><i class="fas fa-calculator"></i> الإجمالي ($)</label>
+                            <input type="number" id="total_price_${i}" name="total_price[]" step="0.01" readonly placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purpose_${i}" class="required-field"><i class="fas fa-bullseye"></i> الغرض من الطلب</label>
+                        <textarea id="purpose_${i}" name="purpose[]" rows="2" required placeholder="لماذا تحتاج هذا الصنف/الخدمة؟"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="urgency_${i}"><i class="fas fa-exclamation-triangle"></i> مستوى الأولوية</label>
+                        <select id="urgency_${i}" name="urgency[]">
+                            <option value="عادي">عادي</option>
+                            <option value="متوسط">متوسط</option>
+                            <option value="عاجل">عاجل</option>
+                            <option value="طوارئ">طوارئ</option>
+                        </select>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            }
+        }
+
+        // حساب الإجمالي لكل صنف
+        function calculateTotal(index) {
+            const quantity = parseFloat(document.getElementById(`quantity_${index}`).value) || 0;
+            const unitPrice = parseFloat(document.getElementById(`unit_price_${index}`).value) || 0;
+            const total = quantity * unitPrice;
+            document.getElementById(`total_price_${index}`).value = total.toFixed(2);
+        }
+
+        // تعيين تاريخ اليوم تلقائياً
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("date").value = today;
+            generateItemFields();
+        };
+
+        // ============= إرسال النموذج =============
+        
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEVsb1j8Y8ZfcdnJvqeW0q-3V3oSPeHi_jvRruCjBEtKVbJcfSm1OV0t6tiCRhlX0J/exec';
+
+        document.getElementById("purchaseForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const statusMessage = document.getElementById("statusMessage");
+            
+            statusMessage.style.display = 'block';
+            statusMessage.className = 'status-message info';
+            statusMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة طلبك...';
+            
+            const formData = new FormData(form);
+            
+            // إضافة معلومات الموظف الحالي (من رمز الأمان)
+            formData.append('logged_employee_name', currentEmployee.name);
+            formData.append('logged_employee_code', currentEmployee.code);
+            formData.append('logged_employee_email', currentEmployee.email);
+            formData.append('logged_employee_dept', currentEmployee.dept);
+            
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            })
+            .then(() => {
+                statusMessage.innerHTML = '<i class="fas fa-check-circle"></i> ✅ تم إرسال طلب الشراء بنجاح! سيتم إشعارك عبر البريد الإلكتروني.';
+                statusMessage.className = 'status-message success';
+                
+                // إعادة تعيين النموذج مع الاحتفاظ بمعلومات الموظف
+                document.getElementById("project").value = "";
+                document.getElementById("donor").value = "";
+                document.getElementById("budget_line").value = "";
+                document.getElementById("office").value = "";
+                document.getElementById("program").value = "";
+                document.getElementById("date").value = new Date().toISOString().split('T')[0];
+                generateItemFields();
+                
+                setTimeout(() => {
+                    statusMessage.style.display = 'none';
+                }, 8000);
+            })
+            .catch(error => {
+                statusMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> خطأ: ' + error.message;
+                statusMessage.className = 'status-message error';
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
